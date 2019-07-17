@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "example.spring.localhost.uri",
+      "type": "java.lang.String",
+      "description": "Local address of the web application"
+    }
+  ]
+}
