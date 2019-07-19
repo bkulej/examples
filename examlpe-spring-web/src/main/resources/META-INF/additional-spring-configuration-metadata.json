@@ -1,9 +1,14 @@
 {
-  "properties": [
-    {
-      "name": "example.spring.localhost.uri",
-      "type": "java.lang.String",
-      "description": "Local address of the web application"
-    }
-  ]
+	"properties": [
+		{
+			"name": "application.browser.uri",
+			"type": "java.lang.String",
+			"description": "Local address of the web application"
+		},
+		{
+			"name": "application.browser.run",
+			"type": "java.lang.Boolean",
+			"description": "Local address of the web application"
+		}
+	]
 }

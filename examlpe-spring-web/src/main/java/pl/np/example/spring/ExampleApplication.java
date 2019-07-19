@@ -1,7 +1,5 @@
 package pl.np.example.spring;
 
-import java.awt.Desktop;
-import java.io.IOException;
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -12,29 +10,42 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
+import pl.np.example.spring.util.DesktopUtil;
+
+/**
+ * 
+ * @author bkulejewski
+ *
+ */
 @SpringBootApplication
 public class ExampleApplication {
 
 	private final Logger log = LoggerFactory.getLogger(ExampleApplication.class);
+	
+	private boolean browserRun;
+	private URI browserUri;
+	
 
-	public static void main(String[] args) {
-		SpringApplication.run(ExampleApplication.class, args);
+	public ExampleApplication(@Value("${application.browser.run}") boolean browserRun,
+			@Value("${application.browser.uri}") URI browserUri) {
+		super();
+		this.browserRun = browserRun;
+		this.browserUri = browserUri;
 	}
-
-	@Value("${example.spring.localhost.uri}")
-	private String localhostUri;
 
 	@EventListener({ ApplicationReadyEvent.class })
 	public void runBrowser() {
 		try {
-			if (Desktop.isDesktopSupported()) {
-				Desktop.getDesktop().browse(URI.create(localhostUri));
-			} else {
-				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + localhostUri);
+			if (browserRun) {
+				log.debug("Starting the browser with the uri '{}'", browserUri);
+				DesktopUtil.openBrowser(browserUri);
 			}
-			log.info("Browser opened on address {}", localhostUri);
-		} catch (IOException e) {
-			log.info("Cant open browser on address {}", localhostUri);
+		} catch (Exception e) {
+			log.info("Can't open browser with the uri '{}'", browserUri);
 		}
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(ExampleApplication.class, args);
 	}
 }
