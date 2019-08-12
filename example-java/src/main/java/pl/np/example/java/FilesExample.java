@@ -2,7 +2,9 @@ package pl.np.example.java;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -137,14 +139,11 @@ public class FilesExample extends Example {
 	private static void fileWriterReader() throws IOException {
 		header("fileWriterReader");
 
-		var data = "Data file content\nąśćżłóŁŚŃŻŹŁ\nFile end\n";
+		var data = "Data file content\nąśćżłóŁŚŃŻŹŁ\nFile end";
 		var path = Paths.get("./writer.txt");
 
 		Files.writeString(path, data);
 		println("Files.writeString", data);
-
-		Files.write(path, Arrays.asList(data.split("\\r?\\n")));
-		println("Files.write collection", data);
 
 		try (final var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
 			writer.write(data);
@@ -179,6 +178,20 @@ public class FilesExample extends Example {
 			reader.lines().forEach(FilesExample::println);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		println("\nbufferedReader.readline");
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(path.toFile()));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line).append('\n');
+			}
+			println(builder.toString());
+		} finally {
+			reader.close();
 		}
 
 		Files.deleteIfExists(path);
