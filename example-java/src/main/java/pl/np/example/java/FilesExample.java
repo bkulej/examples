@@ -80,15 +80,18 @@ public class FilesExample extends Example {
 		header("fileOutputInputStream");
 
 		final var path = Paths.get("./stream.txt");
-		var string = "Data file content\nąśćżłóŁŚŃŻŹŁ\nFile end1\naaa";
+		var string = "Data file content\nąśćżłóŁŚŃŻŹŁ\nFile end1\n";
 		var data = string.getBytes();
 
+		Files.deleteIfExists(path);
 		Files.write(path, data);
 		println("Files.write bytes", string);
 
+		Files.deleteIfExists(path);
 		Files.write(path, Arrays.asList(string.split("\\r?\\n")));
 		println("Files.write collection", string);
 
+		Files.deleteIfExists(path);
 		try (final var outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE);
 				final var bufferedOutputStream = new BufferedOutputStream(outputStream, 8192)) {
 			bufferedOutputStream.write(data);
@@ -142,24 +145,30 @@ public class FilesExample extends Example {
 		var data = "Data file content\nąśćżłóŁŚŃŻŹŁ\nFile end";
 		var path = Paths.get("./writer.txt");
 
+		Files.deleteIfExists(path);
 		Files.writeString(path, data);
 		println("Files.writeString", data);
 
+		Files.deleteIfExists(path);
+		Files.write(path, Arrays.asList(data.split("\\n")));
+		println("\nFiles.write collection", data);
+
+		Files.deleteIfExists(path);
 		try (final var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
 			writer.write(data);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		println("writer.write", data);
+		println("\nwriter.write", data);
 
-		println("Files.readString");
+		println("\nFiles.readString");
 		try {
 			println(Files.readString(path));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		println("Files.readAllLines");
+		println("\nFiles.readAllLines");
 		try {
 			Files.readAllLines(path).stream().forEach(FilesExample::println);
 		} catch (IOException e) {
